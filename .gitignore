@@ -1,0 +1,16 @@
+# Secrets & Vault State (NEVER commit credentials)
+.env
+*.env
+.env.*
+!.env.example
+*secret*
+*token*
+*oauth*
+x_campaign_state.json
+x_pending_oauth.json
+
+# Runtime & OS
+node_modules/
+*.log
+.DS_Store
+tmp/

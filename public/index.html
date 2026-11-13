@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zoth X Connector — Sovereign X API Controller & Vault Configurator</title>
+  <meta name="description" content="Local-first X (Twitter) multi-account API controller, systemd timer scheduler, Zoth Vault OAuth configurator, and live campaign workstation.">
+  <link rel="canonical" href="https://zoth.nullai.tech/tools/zoth-x-connector">
+
+  <!-- OpenGraph & Twitter Card -->
+  <meta property="og:title" content="Zoth X Connector — Sovereign X API Controller">
+  <meta property="og:description" content="Manage multi-account X API credentials in Zoth Vault, control 5x daily systemd timers, and dispatch posts locally with zero cloud lock-in.">
+  <meta property="og:url" content="https://zoth.nullai.tech/tools/zoth-x-connector">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://zoth.nullai.tech/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@1nc0gn30">
+  <meta name="twitter:creator" content="@1nc0gn30">
+  <meta name="twitter:image" content="https://zoth.nullai.tech/og-image.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "Zoth X Connector",
+        "url": "https://zoth.nullai.tech/tools/zoth-x-connector",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Linux, macOS, Windows",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "creator": {
+          "@type": "Person",
+          "name": "Neal Frazier",
+          "alternateName": "Neal Frazier Tech"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How does Zoth X Connector protect my X API keys?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The local server binds strictly to 127.0.0.1 and stores OAuth 1.0a keys in ~/.config/zoth-vault/x.env with chmod 600 permissions. Raw secrets are never returned to the browser or committed to git."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does scheduled posting stay online across reboots?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Zoth X Connector manages a persistent systemd --user timer (x-multi-hub.timer) with Persistent=true and user lingering enabled."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand-group">
+        <span class="brand-mark">ZOTH <span class="accent">X</span> CONNECTOR</span>
+        <span class="badge">v1.0.0 · 127.0.0.1:8152</span>
+      </div>
+      <div class="topbar-actions">
+        <span id="timerPill" class="status-pill" data-state="unknown">● Checking timer…</span>
+        <button id="refreshBtn" class="btn btn-ghost" type="button">↻ Refresh</button>
+        <a class="btn btn-coffee" href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener">☕ Buy Us a Coffee</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container main-grid">
+    <!-- Pane 1: Timer & Campaign Controller -->
+    <section class="card span-2" aria-labelledby="controller-heading">
+      <div class="card-head">
+        <div>
+          <p class="eyebrow">SYSTEMD TIMER & DISPATCH CONTROLLER</p>
+          <h1 id="controller-heading">Multi-Account X API Workstation</h1>
+        </div>
+        <div class="btn-row">
+          <button id="btnDryRun" class="btn btn-line" type="button">Dry-Run Slot</button>
+          <button id="btnRunSlot" class="btn btn-primary conic-beam" type="button">▶ Run Slot Now</button>
+        </div>
+      </div>
+
+      <div class="telemetry-strip">
+        <div class="metric">
+          <span class="metric-label">Timer State</span>
+          <strong id="mTimerState" class="metric-value">—</strong>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Next Scheduled Run</span>
+          <strong id="mNextTrigger" class="metric-value">—</strong>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Vault Status</span>
+          <strong id="mVaultState" class="metric-value">—</strong>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Connected Handles</span>
+          <strong id="mConnectedCount" class="metric-value">—</strong>
+        </div>
+      </div>
+
+      <div class="schedule-bar">
+        <div class="schedule-hours">
+          <span class="eyebrow">DAILY POSTING HOURS (LOCAL TIME)</span>
+          <div id="hoursGrid" class="hours-grid" role="group" aria-label="Posting hours"></div>
+        </div>
+        <div class="btn-row">
+          <button id="btnSaveSchedule" class="btn btn-line" type="button">Save Schedule</button>
+          <button id="btnStartTimer" class="btn btn-line" type="button">Start Timer</button>
+          <button id="btnStopTimer" class="btn btn-danger-ghost" type="button">Pause Timer</button>
+        </div>
+      </div>
+
+      <pre id="actionOutput" class="console-box" aria-live="polite">Ready. Local controller bound to 127.0.0.1:8152 — raw Vault keys stay on disk (chmod 600).</pre>
+    </section>
+
+    <!-- Pane 2: Connected Accounts & Campaign Progress -->
+    <section class="card" aria-labelledby="accounts-heading">
+      <div class="card-head">
+        <div>
+          <p class="eyebrow">ZOTH VAULT // CAMPAIGN STATE</p>
+          <h2 id="accounts-heading">X Accounts</h2>
+        </div>
+      </div>
+      <div id="accountsList" class="accounts-list"></div>
+    </section>
+
+    <!-- Pane 3: Instant Post Composer -->
+    <section class="card" aria-labelledby="composer-heading">
+      <div class="card-head">
+        <div>
+          <p class="eyebrow">DIRECT X API V2 DISPATCH</p>
+          <h2 id="composer-heading">Instant Post Composer</h2>
+        </div>
+        <span id="charCount" class="mono-tag">0 / 280</span>
+      </div>
+      <form id="postForm" class="stack-form">
+        <label class="field">
+          <span>Target Handle</span>
+          <select id="postHandle" required></select>
+        </label>
+        <label class="field">
+          <span>Post Text</span>
+          <textarea id="postText" rows="5" maxlength="280" placeholder="Write a high-signal update for X…" required></textarea>
+        </label>
+        <div class="btn-row">
+          <button id="btnPostDry" class="btn btn-line" type="button">Preview (Dry-Run)</button>
+          <button id="btnPostLive" class="btn btn-primary" type="submit">Post to X Now</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Pane 4: Vault OAuth Configurator -->
+    <section class="card" aria-labelledby="vault-heading">
+      <div class="card-head">
+        <div>
+          <p class="eyebrow">LOCAL CREDENTIAL CONFIGURATOR</p>
+          <h2 id="vault-heading">Connect Handle in Zoth Vault</h2>
+        </div>
+      </div>
+      <p class="muted-note">Saves OAuth 1.0a tokens directly to <code>~/.config/zoth-vault/x.env</code> with <code>0600</code> permissions. Existing keys are never sent back to the browser.</p>
+      <form id="vaultForm" class="stack-form">
+        <div class="two-col">
+          <label class="field">
+            <span>X Handle</span>
+            <input id="cfgHandle" type="text" placeholder="e.g. zothstudio" pattern="[A-Za-z0-9_]+" required>
+          </label>
+          <label class="field">
+            <span>Access Token</span>
+            <input id="cfgAccessToken" type="password" placeholder="User Access Token" required>
+          </label>
+        </div>
+        <label class="field">
+          <span>Access Token Secret</span>
+          <input id="cfgAccessSecret" type="password" placeholder="User Access Secret" required>
+        </label>
+        <div class="two-col">
+          <label class="field">
+            <span>Consumer API Key (optional)</span>
+            <input id="cfgApiKey" type="password" placeholder="Leave blank to keep existing">
+          </label>
+          <label class="field">
+            <span>Consumer API Secret (optional)</span>
+            <input id="cfgApiSecret" type="password" placeholder="Leave blank to keep existing">
+          </label>
+        </div>
+        <button class="btn btn-line" type="submit">Save to Zoth Vault (chmod 600)</button>
+      </form>
+    </section>
+
+    <!-- Pane 5: Live Journald Logs -->
+    <section class="card" aria-labelledby="logs-heading">
+      <div class="card-head">
+        <div>
+          <p class="eyebrow">JOURNALCTL // X-MULTI-HUB.SERVICE</p>
+          <h2 id="logs-heading">Recent Execution Logs</h2>
+        </div>
+      </div>
+      <pre id="logsBox" class="console-box logs-box">Loading systemd journal…</pre>
+    </section>
+
+    <!-- Pane 6: Documentation & Attribution -->
+    <section class="card span-2 docs-card" aria-labelledby="docs-heading">
+      <p class="eyebrow">SOVEREIGN ARCHITECTURE & CLI</p>
+      <h2 id="docs-heading">What It Does &amp; How It Works</h2>
+      <div class="docs-grid">
+        <div>
+          <h3>Local-Only Security</h3>
+          <p>Bound strictly to <code>127.0.0.1:8152</code>. OAuth 1.0a secrets stay in <code>~/.config/zoth-vault/x.env</code> (<code>chmod 600</code>) and are never serialized to the browser or committed to git.</p>
+        </div>
+        <div>
+          <h3>Persistent 5× Daily Timer</h3>
+          <p>Controls <code>x-multi-hub.timer</code> with <code>Persistent=true</code> and user lingering so scheduled slots survive terminal exits and reboots.</p>
+        </div>
+        <div>
+          <h3>ZothOS CLI</h3>
+          <p>Run <code>zoth-x-connector --status</code>, <code>zoth-x-connector --json</code>, <code>zoth-x-connector run</code>, or <code>zoth-x-connector timer start|stop</code> from any terminal.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer container">
+    <p>Engineered by Neal Frazier Tech (<a href="https://github.com/1nc0gn30/zoth-x-connector" target="_blank" rel="noopener">@1nc0gn30</a>) • <a href="https://nullai.tech" target="_blank" rel="noopener">NullAI Platform</a></p>
+    <p class="support-links">
+      <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener">☕ Buy Us a Coffee</a>
+      <span>•</span>
+      <span class="mono-tag">◎ Solana: GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK</span>
+    </p>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>

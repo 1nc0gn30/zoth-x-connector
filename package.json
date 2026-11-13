@@ -1,0 +1,16 @@
+{
+  "name": "zoth-x-connector",
+  "version": "1.0.0",
+  "description": "Sovereign local X (Twitter) multi-account API controller, systemd timer scheduler, Zoth Vault OAuth configurator, and live campaign workstation.",
+  "type": "module",
+  "main": "server.mjs",
+  "bin": {
+    "zoth-x-connector": "./bin/zoth-x-connector"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node server.mjs"
+  },
+  "author": "Neal Frazier Tech (@1nc0gn30)",
+  "license": "MIT"
+}
