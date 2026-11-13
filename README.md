@@ -8,6 +8,32 @@
 
 ---
 
+## How to Use (Step-by-Step Guide & Video)
+
+> 🎬 **Walkthrough Video**: [public/assets/zoth-x-connector-walkthrough.mp4](public/assets/zoth-x-connector-walkthrough.mp4) (also embedded inside the local UI at `http://127.0.0.1:8152`)
+
+### Step 1 — Check Timer, Vault & Daily Schedule
+Verify `x-multi-hub.timer` is `ACTIVE`, inspect connected handles (`Connected` vs `Standby`), and toggle your daily posting hours (`9a`, `12p`, `3p`, `6p`, `9p`).
+
+![Step 1: Dashboard & Timer](public/assets/guide/step1-dashboard.jpg)
+
+### Step 2 — Dry-Run or Dispatch a Campaign Slot
+Click **Dry-Run Slot** to preview the next queued posts and attached media in the dark telemetry console without sending, or click **▶ Run Slot Now** to publish live.
+
+![Step 2: Dry-Run Preview](public/assets/guide/step2-dryrun.jpg)
+
+### Step 3 — Instant Post Composer
+Select any connected handle, compose a post (up to 280 chars), preview with **Preview (Dry-Run)**, and dispatch directly via X API v2.
+
+![Step 3: Instant Post Composer](public/assets/guide/step3-composer.jpg)
+
+### Step 4 — Connect Handles in Zoth Vault & Inspect Logs
+Add or rotate OAuth 1.0a tokens in `~/.config/zoth-vault/x.env` (`chmod 600`) and monitor live `journalctl` output from `x-multi-hub.service`.
+
+![Step 4: Zoth Vault & Logs](public/assets/guide/step4-vault-logs.jpg)
+
+---
+
 ## What It Does
 `zoth-x-connector` provides a local-only web controller and CLI for managing multi-account X (Twitter) API posting, OAuth 1.0a credentials in Zoth Vault (`~/.config/zoth-vault/x.env`, `chmod 600`), 5× daily `systemd --user` timer schedules (`x-multi-hub.timer`), instant post dispatch, dry-run previews, and live `journalctl` execution logs.
 

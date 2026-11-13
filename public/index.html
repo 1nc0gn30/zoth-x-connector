@@ -217,7 +217,40 @@
       <pre id="logsBox" class="console-box logs-box">Loading systemd journal…</pre>
     </section>
 
-    <!-- Pane 6: Documentation & Attribution -->
+    <!-- Pane 6: Step-by-Step Walkthrough & Video -->
+    <section class="card span-2" aria-labelledby="guide-heading">
+      <div class="card-head">
+        <div>
+          <p class="eyebrow">INTERACTIVE WALKTHROUGH // VIDEO &amp; STEPS</p>
+          <h2 id="guide-heading">How to Use Zoth X Connector</h2>
+        </div>
+      </div>
+      <div class="walkthrough-video-wrap">
+        <video class="walkthrough-video" controls playsinline preload="metadata" poster="/assets/guide/step1-dashboard.jpg" aria-label="16-second step-by-step video walkthrough of Zoth X Connector">
+          <source src="/assets/zoth-x-connector-walkthrough.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="guide-steps">
+        <figure class="guide-step">
+          <img src="/assets/guide/step1-dashboard.jpg" alt="Step 1: Zoth X Connector dashboard showing active systemd timer, next scheduled run, Vault lock state, and connected X handles" loading="lazy">
+          <figcaption><strong>1. Monitor &amp; Schedule</strong> — Verify the <code>systemd</code> timer is active, pick your daily posting hours (e.g. 9a, 12p, 3p, 6p, 9p), and click <em>Save Schedule</em>.</figcaption>
+        </figure>
+        <figure class="guide-step">
+          <img src="/assets/guide/step2-dryrun.jpg" alt="Step 2: Dry-Run Slot preview output showing queued X posts and attached video media without publishing" loading="lazy">
+          <figcaption><strong>2. Dry-Run or Dispatch</strong> — Click <em>Dry-Run Slot</em> to preview queued campaign posts &amp; media, or <em>Run Slot Now</em> to publish immediately.</figcaption>
+        </figure>
+        <figure class="guide-step">
+          <img src="/assets/guide/step3-composer.jpg" alt="Step 3: Instant Post Composer with target handle selector, 280-character counter, and dry-run preview" loading="lazy">
+          <figcaption><strong>3. Instant Post Composer</strong> — Choose any connected handle, write up to 280 characters, preview with <em>Dry-Run</em>, and send live via X API v2.</figcaption>
+        </figure>
+        <figure class="guide-step">
+          <img src="/assets/guide/step4-vault-logs.jpg" alt="Step 4: Zoth Vault OAuth credential configurator and live systemd journalctl execution logs" loading="lazy">
+          <figcaption><strong>4. Connect Handles &amp; Inspect Logs</strong> — Save OAuth 1.0a tokens to Zoth Vault (<code>chmod 600</code>) and inspect live <code>journalctl</code> logs.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- Pane 7: Documentation & Attribution -->
     <section class="card span-2 docs-card" aria-labelledby="docs-heading">
       <p class="eyebrow">SOVEREIGN ARCHITECTURE & CLI</p>
       <h2 id="docs-heading">What It Does &amp; How It Works</h2>
