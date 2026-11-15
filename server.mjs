@@ -62,6 +62,13 @@ function getHandleCreds(env, handle) {
   const keyUpper = handle.toUpperCase().replace(/[^A-Z0-9]/g, '_');
   let accessToken = env[`X_TOKEN_${keyUpper}`] || env[`X_ACCESS_TOKEN_${keyUpper}`];
   let accessSecret = env[`X_SECRET_${keyUpper}`] || env[`X_ACCESS_SECRET_${keyUpper}`];
+  if (!accessToken && keyUpper === 'NULLAITECH') {
+    accessToken = env.X_TOKEN_NEALFRAZIERTECH || env.X_ACCESS_TOKEN_NEALFRAZIERTECH;
+    accessSecret = env.X_SECRET_NEALFRAZIERTECH || env.X_ACCESS_SECRET_NEALFRAZIERTECH;
+  } else if (!accessToken && keyUpper === 'NEALFRAZIERTECH') {
+    accessToken = env.X_TOKEN_NULLAITECH || env.X_ACCESS_TOKEN_NULLAITECH;
+    accessSecret = env.X_SECRET_NULLAITECH || env.X_ACCESS_SECRET_NULLAITECH;
+  }
   if (!accessToken && (handle === '1nc0gn30' || handle === 'default')) {
     accessToken = env.X_ACCESS_TOKEN;
     accessSecret = env.X_ACCESS_SECRET;
