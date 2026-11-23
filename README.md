@@ -42,7 +42,11 @@ Add or rotate OAuth 1.0a tokens in `~/.config/zoth-vault/x.env` (`chmod 600`) an
 - **Persistent Scheduler**: Controls `~/.config/systemd/user/x-multi-hub.timer` & `x-multi-hub.service` with `Persistent=true` so scheduled slots survive terminal exits and reboots.
 - **100% Free & Open Access**: Zero paywalls, zero cloud lock-in, zero outbound telemetry.
 
-## ZothOS CLI & API Commands
+## ZothOS CLI Usage
+
+No package installation is required — the connector ships zero runtime dependencies and runs
+straight from the repository (`node server.mjs`, launched for you by `zoth-x-connector`).
+
 ```bash
 zoth-x-connector --help
 zoth-x-connector --status
@@ -52,7 +56,7 @@ zoth-x-connector timer start
 zoth-x-connector timer stop
 ```
 
-### Local HTTP API (`127.0.0.1:8152`)
+## Local HTTP API (`127.0.0.1:8152`)
 - `GET /health` — Daemon health check
 - `GET /api/status` — Timer state, connected accounts (masked), campaign progress, and recent `journalctl` logs
 - `POST /api/run-slot` — Trigger a live or `--dry-run` campaign slot (`{ dryRun, account, slot }`)
